@@ -5,7 +5,7 @@ import re
 import MeCab
 import copy
 import pandas as pd
-
+import json
 def getDatasRaw(path):
     with open(path, encoding="utf-8") as f:
         characters2replace={
@@ -75,7 +75,6 @@ def makeDataset(path):
         #reSymbol = re.compile("\(|\)|\[|\]|\{|\}|「|」|『|』|%|/|\.")
         for word in words:
             if word[2]==1 and len(word[0])!=1 and reDigit.match(word[0]) is None:
-                print(word[0])
                 count=count+1
         return count
     def getNOCharacters(text):
@@ -115,11 +114,14 @@ def makeDataset(path):
         data["NOWordsUnregistered"]=getNOWordsUnregistered(row[1])
         data["NOCharacters"]=getNOCharacters(row[1])
         data["NOCharactersKanji"]=getNOCharactersKanji(row[1])
-        data["isReadable"]= row[2]
+        data["isReadable"]= int(row[2])
         dataset[row[0]]=data
-        print(data)
+    with open('dataset.json', 'w') as f:
+        json.dump(dataset, f, indent=4)
+
 
 def main():
     makeDataset("dataRaw.csv")
+
 if __name__ == '__main__':
     main()
