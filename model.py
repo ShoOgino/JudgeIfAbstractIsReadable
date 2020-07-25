@@ -14,17 +14,36 @@ from sklearn.model_selection import GridSearchCV
 import json
 def getModelBest():
     #features2Drop, parametersBest=getParametersHyperBest()
-    features2Drop=['NOCharacters', 'NOWordsNum', 'NOWordsEnglish', 'NOWordsConjunction', 'NOCharactersKanji', 'NOWordsUnregistered']
+    #features2Drop=['NOCharacters', 'NOWordsNum', 'NOWordsConjunction', 'NOWordsUnregistered', 'NOCharactersKanji']
     parametersBest={
-        "n_estimators":5,
-        "max_depth":5,
-        "min_samples_leaf":2,
+        "n_estimators":2,
+        "max_depth":3,
+        "min_samples_leaf":3,
         "min_samples_split":2,
-        "random_state":10
+        "random_state":7
     }
     #getParametersTrainBest(getDatasetsSplit(features2Drop))
-    testParametersHyper(features2Drop, parametersBest)
-    return 0
+    #testParametersHyper(features2Drop, parametersBest)
+    dataset=getDatasetBest()
+    model=RandomForestClassifier(
+        n_estimators=parametersBest["n_estimators"],
+        max_depth=parametersBest["max_depth"],
+        min_samples_leaf=parametersBest["min_samples_leaf"],
+        min_samples_split=parametersBest["min_samples_split"],
+        random_state=parametersBest["random_state"]
+    )
+    model.fit(dataset[0]["train_x"], dataset[0]["train_y"])
+    return model
+
+def getDatasetBest():
+    features2Drop=['NOCharacters', 'NOWordsNum', 'NOWordsConjunction', 'NOWordsUnregistered', 'NOCharactersKanji']
+    return getDatasetsSplit(features2Drop)
+
+def testModel(model, datasetsSplit):
+    print("testing model...")
+    accuracyTest=accuracy_score(datasetsSplit[0]["test_y"], model.predict(datasetsSplit[0]["test_x"]))
+    print("finish testing model")
+    print("accuracy: "+str(accuracyTest))
 
 def testParametersHyper(features2Drop, parametersBest):
     datasetsSplit=getDatasetsSplit(features2Drop)
@@ -59,6 +78,7 @@ def getDatasetsSplit(*features2Drop):
         with open('dataset'+str(i)+'.json') as f:
             d = json.load(f)
         dataset.append(d)
+
     for trial in range(10):
         dictionary={}
         train={
@@ -96,6 +116,26 @@ def getDatasetsSplit(*features2Drop):
                         valid[column].append(dataset[i][row][column])
                     else:
                         train[column].append(dataset[i][row][column])
+        test={
+            "NOSentences":[],
+            "NOWords" : [],
+            "NOWordsEnglish" : [],
+            "NOWordsNum" : [],
+            "NOWordsParenthese" : [],
+            "NOWordsReadingPoint" : [],
+            "NOWordsConjunction" : [],
+            "NOWordsPostpositionalParticleNo" : [],
+            "NOWordsUnregistered" : [],
+            "NOCharacters" : [],
+            "NOCharactersKanji" : [],
+            "isReadable" : []
+        }
+        with open('dataset'+str(10)+'.json') as f:
+            d = json.load(f)
+            for row in d:
+                for column in d[row]:
+                    test[column].append(d[row][column])
+        
         pd.set_option('display.max_columns', None)
         pd.set_option('display.max_rows', None)
 
@@ -106,16 +146,26 @@ def getDatasetsSplit(*features2Drop):
             train_x=train_x.drop(feature, axis=1)
         #train_x = (train_x - train_x.mean())/ train_x.std(ddof=0) #RFでは正規化しない。
         train_y = pd.DataFrame(train)['isReadable']
+
         valid_x = pd.DataFrame(valid)
         valid_x = valid_x.drop(['isReadable'], axis=1)
         for feature in features:
             valid_x=valid_x.drop(feature, axis=1)
         #valid_x = (valid_x - valid_x.mean())/ valid_x.std(ddof=0) # RFでは正規化しない。
         valid_y = pd.DataFrame(valid)['isReadable']
+
+        test_x = pd.DataFrame(test)
+        test_x = test_x.drop(['isReadable'], axis=1)
+        for feature in features:
+            test_x=test_x.drop(feature, axis=1)
+        #valid_x = (valid_x - valid_x.mean())/ valid_x.std(ddof=0) # RFでは正規化しない。
+        test_y = pd.DataFrame(test)['isReadable']
         dictionary["train_x"]=train_x
         dictionary["train_y"]=train_y
         dictionary["valid_x"]=valid_x
         dictionary["valid_y"]=valid_y
+        dictionary["test_x"]=test_x
+        dictionary["test_y"]=test_y
         datasetSplit.append(dictionary)
     return datasetSplit
 
@@ -169,9 +219,9 @@ def getParametersTrainBest(datasetsSplit):
     }
     parameters2Tune = {#5, 3, 2, 2, 0
         'n_estimators'     :[2, 3, 5, 10],
-        'max_depth'        :[2, 3, 5],
-        'min_samples_leaf' :[2, 5],
-        'min_samples_split':[2, 5],
+        'max_depth'        :[2, 3, 5, 10],
+        'min_samples_leaf' :[2, 3, 5, 10],
+        'min_samples_split':[2, 3, 5, 10],
         'random_state'     :[0, 7, 10]
     }
     for n_estimators in parameters2Tune["n_estimators"]:
@@ -220,7 +270,9 @@ def getParametersTrainBest(datasetsSplit):
     return parametersBest, accuracyBest
 
 def main():
-    getModelBest()
+    model=getModelBest()
+    dataset=getDatasetBest()
+    testModel(model, dataset)
 
 if __name__ == '__main__':
     main()

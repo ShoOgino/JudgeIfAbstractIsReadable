@@ -69,20 +69,6 @@
         "NOCharactersKanji": 145,
         "isReadable": 0
     },
-    "https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=203174&item_no=1&page_id=13&block_id=8": {
-        "NOSentences": 7,
-        "NOWords": 213,
-        "NOWordsEnglish": 6,
-        "NOWordsNum": 1,
-        "NOWordsParenthese": 2,
-        "NOWordsReadingPoint": 10,
-        "NOWordsConjunction": 2,
-        "NOWordsPostpositionalParticleNo": 16,
-        "NOWordsUnregistered": 8,
-        "NOCharacters": 428,
-        "NOCharactersKanji": 101,
-        "isReadable": 0
-    },
     "https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=202734&item_no=1&page_id=13&block_id=8": {
         "NOSentences": 7,
         "NOWords": 233,
@@ -151,20 +137,6 @@
         "NOWordsUnregistered": 9,
         "NOCharacters": 440,
         "NOCharactersKanji": 155,
-        "isReadable": 1
-    },
-    "https://ipsj.ixsq.nii.ac.jp/ej/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=202724&item_no=1&page_id=13&block_id=8": {
-        "NOSentences": 7,
-        "NOWords": 251,
-        "NOWordsEnglish": 2,
-        "NOWordsNum": 0,
-        "NOWordsParenthese": 0,
-        "NOWordsReadingPoint": 13,
-        "NOWordsConjunction": 3,
-        "NOWordsPostpositionalParticleNo": 12,
-        "NOWordsUnregistered": 4,
-        "NOCharacters": 433,
-        "NOCharactersKanji": 176,
         "isReadable": 1
     }
 }
